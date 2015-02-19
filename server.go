@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -17,33 +17,23 @@ func main() {
 	movements := make(chan movement, 500) //makes a channel for movements, with a depth of 500
 
 	http.HandleFunc("/control/", control)
-	http.HandleFunc("/move_x/{toMove}", func(w http.ResponseWriter, req *http.Request) {
-		vars := mux.Vars(req)
-		toMove, err := strconv.Atoi(vars["toMove"])
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Error: %s is probably not an int", vars["toMove"])
-		} else {
-			move_x(movements, toMove)
-			fmt.Fprintf(w, "Moved %d on x", toMove)
-		}
-	})
 
-	http.HandleFunc("/move_y/{toMove}", func(w http.ResponseWriter, req *http.Request) {
-		vars := mux.Vars(req)
-		toMove, err := strconv.Atoi(vars["toMove"])
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Error: %s is probably not an int", vars["toMove"])
-		} else {
-			move_y(movements, toMove)
-			fmt.Fprintf(w, "Moved %d on y", toMove)
+	http.HandleFunc("/move/", func(w http.ResponseWriter, req *http.Request) {
+		log.Println("Recieved post request.")
+		axis := req.FormValue("axis")
+		step := req.FormValue("step")
+
+		if axis != "x" || axis != "y" {
+			w.WriteHeader()
 		}
+
+		log.Printf("Moving %d units on %s", step, axis)
+		w.Write([]byte("Success!  "))
 	})
 
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
-		panic(err.Error())
+		panic(erhttp.Error())
 	}
 }
 
