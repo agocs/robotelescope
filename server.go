@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type movement struct {
@@ -24,7 +23,7 @@ func main() {
 		step := req.FormValue("step")
 
 		if axis != "x" || axis != "y" {
-			w.WriteHeader()
+			w.WriteHeader(500)
 		}
 
 		log.Printf("Moving %d units on %s", step, axis)
@@ -33,7 +32,7 @@ func main() {
 
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
-		panic(erhttp.Error())
+		panic(err.Error())
 	}
 }
 
