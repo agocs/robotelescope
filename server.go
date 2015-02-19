@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type movement struct {
@@ -21,13 +22,22 @@ func main() {
 		log.Println("Recieved post request.")
 		axis := req.FormValue("axis")
 		step := req.FormValue("step")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		if axis != "x" || axis != "y" {
+		message := []byte("Don't know yet")
+
+		toMove, err := strconv.Atoi(step)
+		if err != nil {
 			w.WriteHeader(500)
+			message = []byte("Step needs to be an integer")
+		} else if axis != "x" || axis != "y" {
+			w.WriteHeader(500)
+			message = []byte("Axis needs to be x or y")
+		} else {
+			log.Printf("Moving %d units on %s", toMove, axis)
+			message = []byte("Success! ")
 		}
-
-		log.Printf("Moving %d units on %s", step, axis)
-		w.Write([]byte("Success!  "))
+		w.Write(message)
 	})
 
 	err := http.ListenAndServe(":8000", nil)
