@@ -13,7 +13,7 @@ type movement struct {
 
 func main() {
 
-	movements := make(chan movement, 500) //makes a channel for movements, with a depth of 500
+	//movements := make(chan movement, 500) //makes a channel for movements, with a depth of 500
 
 	http.HandleFunc("/control/", control)
 
