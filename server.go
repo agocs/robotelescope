@@ -19,9 +19,11 @@ func main() {
 	http.HandleFunc("/control/", control)
 
 	http.HandleFunc("/move/", func(w http.ResponseWriter, req *http.Request) {
-		log.Println("Recieved post request.")
+
 		axis := req.FormValue("axis")
 		step := req.FormValue("step")
+
+		log.Printf("Recieved post request. %s, %s", axis, step)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		message := []byte("Don't know yet")
@@ -30,7 +32,7 @@ func main() {
 		if err != nil {
 			w.WriteHeader(500)
 			message = []byte("Step needs to be an integer")
-		} else if axis != "x" || axis != "y" {
+		} else if axis != "x" && axis != "y" {
 			w.WriteHeader(500)
 			message = []byte("Axis needs to be x or y")
 		} else {
